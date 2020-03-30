@@ -1,7 +1,20 @@
-#game {
-  width: 340px;
+*,
+*:before,
+*:after {
+   position: relative;
+}
+#hole,
+#mole {
+   width: 340px;
+   position: absolute;
 }
 
 img {
-  margin: 5px;
+   margin: 5px;
+}
+img[data-active='true'] {
+   z-index: 34534;
+}
+img[data-active='false'] {
+   z-index: 9;
 }
