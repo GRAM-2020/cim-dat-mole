@@ -3,8 +3,9 @@
   let fieldSize, startingLifes, peekTime, turnTime, lifeCounter, hit, runningGame, fieldActive;
 
   //Variables that have a connection to the Dom Element
-  const startButton = select("#start");
-  let countdownInput = select("#countdown")
+  // const resetButton = select("#reset");
+  const startRetryButton = select("#start-retry");
+  let countdownInput = select("#countdown");
   const hole = select("#hole");
   let life = select("#life")
   const mole = select("#mole");
@@ -53,9 +54,9 @@
     }
   }
 
-  // ****************************  Starting the game + Countdown ****************************
+  // ****************************  Starting/restarting the game + Countdown ****************************
   // Countdown for the game u can only click once, the variable runningGame is set to true
-  startButton.addEventListener('click', countdown)
+  startRetryButton.addEventListener('click', () => { initVars(); countdown() })
   function countdown() {
     if (!runningGame) {
       runningGame = true
@@ -82,26 +83,27 @@
       }
       // Here we can check if you hit a hole and have 0 Lifes the game is over
       if (life.value === "0") {
-        uLost()
+        gameOverAlert()
       }
     }
   }
 
-  // **************************** Logic for one Instance of the Game  ****************************
+  // **************************** First time starting the Game  ****************************
   function startGame() {
 
     const holeImgs = selectAll("[data-img='hole']");
     const moleImgs = selectAll("[data-img='mole']");
     const allImgs = selectAll('img')
 
-    //if a mole_hited png is still in the field just overwrite it at the start of an instance
 
     fieldActive = true // now the function checkClick will update the score
 
 
 
+    // **************************** Logic for one Instance of the Game  ****************************
     function oneTurn() {
       const random = Math.floor(Math.random() * fieldSize);
+      //if a mole_hited png is still in the field just overwrite it at the start of an instance
       moleImgs.filter(i => (i.src !== 'img/mole.png') ? i.src = 'img/mole.png' : i)
       // Here we say if u didn't hit anything u will loose a life, and if u did hit something we reset the Value hit to false
       function oneTurnCheck() {
@@ -110,7 +112,8 @@
         if (!hit) {
           life.value--;
           if (life.value === "0") {
-            uLost()
+            gameOverAlert()
+
           }
         }
         hit = false;
@@ -123,6 +126,7 @@
         if (life.value > 0) {
           oneTurn()
         }
+        startRetryButton.innerText = 'Retry';
       }
 
         , peekTime + turnTime)
@@ -135,11 +139,9 @@
 
   // **************************** EndDisplay  ****************************
   // needs to live outside so the startGame and the checkClick can use the fkt
-  function uLost() {
-    alert('u lost')
+  function gameOverAlert() {
+    alert('GAME OVER!')
   }
-
-
 
   // Ausführung
   initVars();
