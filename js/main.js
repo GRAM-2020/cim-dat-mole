@@ -6,12 +6,27 @@
   const startRetryButton = select("#start-retry");
   const hole = select("#hole");
   const mole = select("#mole");
-  // Values that change over time
+
+  // Values that change
   let countdownInput = select("#countdown");
   let life = select("#life");
   let level = select("#level");
 
-  // inital Values we set here
+  //Sounds
+  let countDownAudio = new Audio();
+  countDownAudio.src = 'sound/countdown.mp3'
+  let hitAudio = new Audio();
+  hitAudio.src = 'sound/hit.mp3'
+  let gameOverAudio = new Audio();
+  gameOverAudio.src = 'sound/gameover.mp3'
+  let levelUpAudio = new Audio();
+  levelUpAudio.src = 'sound/levelup.mp3'
+  let loseAudio = new Audio();
+  loseAudio.src = 'sound/lose.mp3'
+  let retryAudio = new Audio();
+  retryAudio.src = 'sound/retry.mp3'
+
+  // inital Values
   function initVars() {
     countdownInput.value = "Ready?";
     runningGame = false;
@@ -58,14 +73,20 @@
 
   // ****************************  Starting/restarting the game + Countdown ****************************
   // Countdown for the game u can only click once, the variable runningGame is set to true
-  startRetryButton.addEventListener('click', () => { initVars(); countdown() })
+  startRetryButton.addEventListener('click', () => {
+    if (life.value < startingLifes) {
+      retryAudio.play();
+    }
+    initVars();
+    countdown()
+  })
   function countdown() {
     if (!runningGame) {
-      runningGame = true
-      setTimeout(() => countdownInput.value = 3, 1000)
+      runningGame = true;
+      setTimeout(() => { countdownInput.value = 3; countDownAudio.play(); }, 1000)
       setTimeout(() => countdownInput.value = 2, 2000)
       setTimeout(() => countdownInput.value = 1, 3000)
-      setTimeout(() => { countdownInput.value = "GO!"; startGame() }, 4000)
+      setTimeout(() => { countdownInput.value = "Fight!"; startGame() }, 4000)
     }
 
   }
@@ -75,12 +96,14 @@
   function checkClick(e) {
     if (fieldActive) {
       if (this.getAttribute('data-active') === "true" && this.getAttribute('data-img') === 'hole') {
-        hit = true
+        loseAudio.play();
+        hit = true;
         life.value--
       } else {
-        hit = true
+        hitAudio.play();
+        hit = true;
         //if u hit a mole u get the mole_hited img, gets reseted after each instance
-        this.src = 'img/mole_hited.png'
+        this.src = 'img/mole_hited.png';
 
       }
       // Here we can check if you hit a hole and have 0 Lifes the game is over
@@ -105,6 +128,7 @@
       if (runningGame) {
         level.value = currentLevel;
         setTimeout(() => {
+          levelUpAudio.play();
           currentLevel++;
           raiseLevel()
         }, 5000);
@@ -124,6 +148,7 @@
         toggle(moleImgs[random]);
         // hit is set to false in the init Vars
         if (!hit) {
+          loseAudio.play();
           life.value--;
           if (life.value === "0") {
             gameOverAlert()
@@ -155,6 +180,7 @@
   // **************************** EndDisplay  ****************************
   // needs to live outside so the startGame and the checkClick can use the fkt
   function gameOverAlert() {
+    gameOverAudio.play();
     alert(`GAME OVER! You have reached level ${currentLevel}`)
     runningGame = false;
   }
