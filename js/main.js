@@ -3,22 +3,24 @@
   let fieldSize, startingLifes, peekTime, turnTime, lifeCounter, hit, runningGame, fieldActive;
 
   //Variables that have a connection to the Dom Element
-  // const resetButton = select("#reset");
   const startRetryButton = select("#start-retry");
-  let countdownInput = select("#countdown");
   const hole = select("#hole");
-  let life = select("#life")
   const mole = select("#mole");
+  // Values that change over time
+  let countdownInput = select("#countdown");
+  let life = select("#life");
+  let level = select("#level");
 
   // inital Values we set here
   function initVars() {
     countdownInput.value = "Ready?";
     runningGame = false;
     startingLifes = 3;
+    currentLevel = 1;
+    level.value = currentLevel;
     life.value = startingLifes;
     fieldSize = 9;
-    peekTime = 1000;
-    turnTime = 1200;
+    ;
     fieldActive = false;
     hit = false;
   }
@@ -30,11 +32,11 @@
     let img;
     for (let i = 0; i < fieldSize; i++) {
       img = create("img");
-      img.draggable = false
+      img.draggable = false;
       img.src = "img/hole.png";
       img.setAttribute("data-active", 'true');
       img.setAttribute("data-img", "hole");
-      img.addEventListener('click', checkClick)
+      img.addEventListener('click', checkClick);
       hole.appendChild(img);
     }
   }
@@ -96,12 +98,24 @@
     const allImgs = selectAll('img')
 
 
-    fieldActive = true // now the function checkClick will update the score
+    // now the function checkClick will update the score
+    fieldActive = true;
 
+    (function raiseLevel() {
+      if (runningGame) {
+        level.value = currentLevel;
+        setTimeout(() => {
+          currentLevel++;
+          raiseLevel()
+        }, 5000);
+      }
 
+    })()
 
     // **************************** Logic for one Instance of the Game  ****************************
     function oneTurn() {
+      peekTime = 350 + 1000 / currentLevel;
+      turnTime = 450 + 1000 / currentLevel
       const random = Math.floor(Math.random() * fieldSize);
       //if a mole_hited png is still in the field just overwrite it at the start of an instance
       moleImgs.filter(i => (i.src !== 'img/mole.png') ? i.src = 'img/mole.png' : i)
@@ -131,6 +145,7 @@
 
         , peekTime + turnTime)
     };
+
     oneTurn();
   }
 
@@ -140,7 +155,8 @@
   // **************************** EndDisplay  ****************************
   // needs to live outside so the startGame and the checkClick can use the fkt
   function gameOverAlert() {
-    alert('GAME OVER!')
+    alert(`GAME OVER! You have reached level ${currentLevel}`)
+    runningGame = false;
   }
 
   // Ausführung
