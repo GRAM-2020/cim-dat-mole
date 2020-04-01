@@ -13,6 +13,9 @@
   let level = select("#level");
 
   //Sounds
+  let vol = 0.5;
+  let labelVol = select('#labelvolume')
+  let inputVol = select('#volume')
   let countDownAudio = new Audio();
   countDownAudio.src = 'sound/countdown.mp3'
   let hitAudio = new Audio();
@@ -35,7 +38,6 @@
     level.value = currentLevel;
     life.value = startingLifes;
     fieldSize = 9;
-    ;
     fieldActive = false;
     hit = false;
   }
@@ -71,6 +73,19 @@
     }
   }
 
+  // **************************** ChangeVolume  ****************************
+  function changeVolume() {
+    // console.log(this)
+    vol = parseInt(this.value);
+    labelVol.innerHTML = vol;
+    countDownAudio.volume = vol / 100
+    gameOverAudio.volume = vol / 100
+    hitAudio.volume = vol / 100
+    levelUpAudio.volume = vol / 100
+    loseAudio.volume = vol / 100
+    retryAudio.volume = vol / 100
+  }
+  inputVol.addEventListener('input', changeVolume);
   // ****************************  Starting/restarting the game + Countdown ****************************
   // Countdown for the game u can only click once, the variable runningGame is set to true
   startRetryButton.addEventListener('click', () => {
