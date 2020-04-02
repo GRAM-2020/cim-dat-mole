@@ -7,7 +7,9 @@
     lifeCounter,
     hit,
     runningGame,
-    fieldActive;
+    fieldActive,
+    molesKilled
+    ;
 
   //Variables that have a connection to the Dom Element
   const startRetryButton = select("#start-retry");
@@ -18,11 +20,17 @@
   const gameOverCard = select('#game-over-card')
   const hideGameOverCardButton = select('#hide-game-over-card')
   const gameOverText = select('#game-over-text');
+  const playerNameInput = select("#playerNameInput");
+  const highscoreList = select('#highscore-list');
+
+
+
 
   // Values that change
   let countdownInput = select("#countdown");
   let life = select("#life");
   let level = select("#level");
+  let playerName = "";
 
   //Sounds
   let vol = 0.5;
@@ -41,14 +49,29 @@
   let retryAudio = new Audio();
   retryAudio.src = "sound/retry.mp3";
 
+
+
+
+
+
   //Intro
   hideWelcomeCardButton.addEventListener('click', () => {
-    welcomeCard.classList.add('display-none')
+    welcomeCard.classList.add('display-none');
+    if (!playerName) {
+      playerName = 'Maradun';
+    }
+    countdownInput.value = `Ready, ${playerName}?`;
+  })
+
+  //Name
+  playerNameInput.addEventListener('change', (e) => {
+    playerName = e.target.value;
+    countdownInput.value = `Ready, ${playerName}?`;
   })
 
   // inital Values
   function initVars() {
-    countdownInput.value = "Ready?";
+    molesKilled = 0;
     runningGame = false;
     startingLifes = 3;
     currentLevel = 1;
@@ -140,6 +163,7 @@
         hit = true;
         life.value--;
       } else {
+        ++molesKilled;
         hitAudio.play();
         hit = true;
         //if u hit a mole u get the mole_hited img, gets reseted after each instance
@@ -203,6 +227,7 @@
         }
         hit = false;
       }
+
       // here we start one turn and test if hit is true or false, than we restart a new Instance of the Game
       toggle(moleImgs[random]);
       setTimeout(() => oneTurnCheck(), peekTime);
@@ -222,15 +247,38 @@
     oneTurn();
   }
 
+  //highscore
+
+  const highScores = JSON.parse(localStorage.getItem("highScores")) || [];
+  // const MAX_HIGH_SCORES = 5;
+
   // **************************** EndDisplay  ****************************
   // needs to live outside so the startGame and the checkClick can use the fkt
   function gameOverAlert() {
-    gameOverText.innerText = `Congrats my friend:
+    const score = {
+      playername: playerName,
+      level: currentLevel,
+      kills: molesKilled
+    }
+    highScores.push(score);
+    highScores.sort((a, b) => b.kills - a.kills);
+    highScores.splice(5);
+    localStorage.setItem("highScores", JSON.stringify(highScores));
+    console.log(score);
+    console.log(highScores);
+    highscoreList.innerHTML = "";
+    highScores.forEach((entry) => {
+      highscoreList.innerHTML += `<li> Level/Kills: ${entry.level}/${entry.kills} Name: ${entry.playername}</li>`
+    });
+
+
+    gameOverText.innerText = `Congrats ${playerName}:
                   You have reached level ${currentLevel}!
-                  The tales of this hunt will be long told after your death...`
+                  The tales of this hunt will be long told after your death...`;
     gameOverAudio.play();
     gameOverCard.classList.add('display-block');
     runningGame = false;
+    fieldActive = false;
   }
 
   hideGameOverCardButton.addEventListener('click', () => {

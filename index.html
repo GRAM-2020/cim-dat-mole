@@ -40,7 +40,7 @@
                   slaying them with well-placed clicks of your mighty mouse! You
                   have 3 lives. Miss a mole, lose a life. The longer you
                   survive, the higher your level , the greater your fame - but
-                  the faster their army attack! Be prepared. Happy hunting...
+                  the faster their army attacks! Be prepared. Happy hunting...
                </p>
                <label>
                   Please enter your name, so they can write songs about
@@ -48,7 +48,7 @@
                >
                <input
                   type="text"
-                  id="playerName"
+                  id="playerNameInput"
                   placeholder="Marudun, the hairy one"
                   class="margin-small"
                />
@@ -70,6 +70,9 @@
                <h4 class="card-title">The hunt is over...</h4>
                <h5 class="card-subtitle">Was it satisfying?</h5>
                <p id="game-over-text" class="card-text"></p>
+               <p>Local Highscore:
+               <ol id="highscore-list"></ol>
+               </p>
                <button id="hide-game-over-card">Yeah, yeah, whatever!</button>
             </div>
          </div>
