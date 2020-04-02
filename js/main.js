@@ -1,6 +1,13 @@
-(function () {
+(function() {
   //Variables we will give an initial Value
-  let fieldSize, startingLifes, peekTime, turnTime, lifeCounter, hit, runningGame, fieldActive;
+  let fieldSize,
+    startingLifes,
+    peekTime,
+    turnTime,
+    lifeCounter,
+    hit,
+    runningGame,
+    fieldActive;
 
   //Variables that have a connection to the Dom Element
   const startRetryButton = select("#start-retry");
@@ -14,20 +21,20 @@
 
   //Sounds
   let vol = 0.5;
-  let labelVol = select('#labelvolume')
-  let inputVol = select('#volume')
+  let labelVol = select("#labelvolume");
+  let inputVol = select("#volume");
   let countDownAudio = new Audio();
-  countDownAudio.src = 'sound/countdown.mp3'
+  countDownAudio.src = "sound/countdown.mp3";
   let hitAudio = new Audio();
-  hitAudio.src = 'sound/hit.mp3'
+  hitAudio.src = "sound/hit.mp3";
   let gameOverAudio = new Audio();
-  gameOverAudio.src = 'sound/gameover.mp3'
+  gameOverAudio.src = "sound/gameover.mp3";
   let levelUpAudio = new Audio();
-  levelUpAudio.src = 'sound/levelup.mp3'
+  levelUpAudio.src = "sound/levelup.mp3";
   let loseAudio = new Audio();
-  loseAudio.src = 'sound/lose.mp3'
+  loseAudio.src = "sound/lose.mp3";
   let retryAudio = new Audio();
-  retryAudio.src = 'sound/retry.mp3'
+  retryAudio.src = "sound/retry.mp3";
 
   // inital Values
   function initVars() {
@@ -51,9 +58,9 @@
       img = create("img");
       img.draggable = false;
       img.src = "img/hole.png";
-      img.setAttribute("data-active", 'true');
+      img.setAttribute("data-active", "true");
       img.setAttribute("data-img", "hole");
-      img.addEventListener('click', checkClick);
+      img.addEventListener("click", checkClick);
       hole.appendChild(img);
     }
   }
@@ -64,11 +71,11 @@
     let img;
     for (let i = 0; i < fieldSize; i++) {
       img = create("img");
-      img.draggable = false
+      img.draggable = false;
       img.src = "img/mole.png";
-      img.setAttribute("data-active", 'false');
+      img.setAttribute("data-active", "false");
       img.setAttribute("data-img", "mole");
-      img.addEventListener('click', checkClick)
+      img.addEventListener("click", checkClick);
       mole.appendChild(img);
     }
   }
@@ -78,64 +85,69 @@
     // console.log(this)
     vol = parseInt(this.value);
     labelVol.innerHTML = vol;
-    countDownAudio.volume = vol / 100
-    gameOverAudio.volume = vol / 100
-    hitAudio.volume = vol / 100
-    levelUpAudio.volume = vol / 100
-    loseAudio.volume = vol / 100
-    retryAudio.volume = vol / 100
+    countDownAudio.volume = vol / 100;
+    gameOverAudio.volume = vol / 100;
+    hitAudio.volume = vol / 100;
+    levelUpAudio.volume = vol / 100;
+    loseAudio.volume = vol / 100;
+    retryAudio.volume = vol / 100;
   }
-  inputVol.addEventListener('input', changeVolume);
+  inputVol.addEventListener("input", changeVolume);
   // ****************************  Starting/restarting the game + Countdown ****************************
   // Countdown for the game u can only click once, the variable runningGame is set to true
-  startRetryButton.addEventListener('click', () => {
+  startRetryButton.addEventListener("click", () => {
     if (life.value < startingLifes) {
       retryAudio.play();
     }
     initVars();
-    countdown()
-  })
+    countdown();
+  });
   function countdown() {
     if (!runningGame) {
       runningGame = true;
-      setTimeout(() => { countdownInput.value = 3; countDownAudio.play(); }, 1000)
-      setTimeout(() => countdownInput.value = 2, 2000)
-      setTimeout(() => countdownInput.value = 1, 3000)
-      setTimeout(() => { countdownInput.value = "Fight!"; startGame() }, 4000)
+      setTimeout(() => {
+        countdownInput.value = 3;
+        countDownAudio.play();
+      }, 1000);
+      setTimeout(() => (countdownInput.value = 2), 2000);
+      setTimeout(() => (countdownInput.value = 1), 3000);
+      setTimeout(() => {
+        countdownInput.value = "Fight!";
+        startGame();
+      }, 4000);
     }
-
   }
 
   // **************************** Check for Click Event  ****************************
   //Here we check for an click Event if its a hole u lose 1 life, u always get a hit, prevents loosing 2 lifes
   function checkClick(e) {
     if (fieldActive) {
-      if (this.getAttribute('data-active') === "true" && this.getAttribute('data-img') === 'hole') {
+      if (
+        this.getAttribute("data-active") === "true" &&
+        this.getAttribute("data-img") === "hole"
+      ) {
         loseAudio.play();
         hit = true;
-        life.value--
+        life.value--;
       } else {
         hitAudio.play();
         hit = true;
         //if u hit a mole u get the mole_hited img, gets reseted after each instance
-        this.src = 'img/mole_hited.png';
+        this.src = "img/mole_hited.png";
         this.classList.add("shake");
-
       }
       // Here we can check if you hit a hole and have 0 Lifes the game is over
       if (life.value === "0") {
-        gameOverAlert()
+        gameOverAlert();
       }
     }
   }
 
   // **************************** First time starting the Game  ****************************
   function startGame() {
-
     const holeImgs = selectAll("[data-img='hole']");
     const moleImgs = selectAll("[data-img='mole']");
-    const allImgs = selectAll('img')
-
+    const allImgs = selectAll("img");
 
     // now the function checkClick will update the score
     fieldActive = true;
@@ -147,23 +159,26 @@
           if (life.value != 0) {
             currentLevel++;
             levelUpAudio.play();
-            raiseLevel()
+            raiseLevel();
           }
         }, 5000);
       }
-
-    })()
+    })();
 
     // **************************** Logic for one Instance of the Game  ****************************
     function oneTurn() {
       peekTime = 350 + 1000 / currentLevel;
-      turnTime = 450 + 1000 / currentLevel
+      turnTime = 450 + 1000 / currentLevel;
       const random = Math.floor(Math.random() * fieldSize);
 
       //if a mole_hited png is still in the field just overwrite it at the start of an instance
-      moleImgs.filter(i => (i.src !== 'img/mole.png') ? i.src = 'img/mole.png' : i)
+      moleImgs.filter(i =>
+        i.src !== "img/mole.png" ? (i.src = "img/mole.png") : i
+      );
       // If a shake class is still on a mple img remove it
-      moleImgs.filter(i => (i.classList.contains('shake')) ? i.classList.remove('shake') : i)
+      moleImgs.filter(i =>
+        i.classList.contains("shake") ? i.classList.remove("shake") : i
+      );
 
       // Here we say if u didn't hit anything u will loose a life, and if u did hit something we reset the Value hit to false
       function oneTurnCheck() {
@@ -173,37 +188,35 @@
           loseAudio.play();
           life.value--;
           if (life.value === "0") {
-            gameOverAlert()
-
+            gameOverAlert();
           }
         }
         hit = false;
       }
       // here we start one turn and test if hit is true or false, than we restart a new Instance of the Game
       toggle(moleImgs[random]);
-      setTimeout(() => oneTurnCheck(), peekTime)
+      setTimeout(() => oneTurnCheck(), peekTime);
 
-      setTimeout(() => {
-        if (life.value > 0) {
-          oneTurn()
-        }
-        startRetryButton.innerText = 'Retry';
-      }
+      setTimeout(
+        () => {
+          if (life.value > 0) {
+            oneTurn();
+          }
+          startRetryButton.innerText = "Retry";
+        },
 
-        , peekTime + turnTime)
-    };
+        peekTime + turnTime
+      );
+    }
 
     oneTurn();
   }
-
-
-
 
   // **************************** EndDisplay  ****************************
   // needs to live outside so the startGame and the checkClick can use the fkt
   function gameOverAlert() {
     gameOverAudio.play();
-    alert(`GAME OVER! You have reached level ${currentLevel}`)
+    alert(`GAME OVER! You have reached level ${currentLevel}`);
     runningGame = false;
   }
 
@@ -212,4 +225,3 @@
   initField();
   crazyMole();
 })();
-
