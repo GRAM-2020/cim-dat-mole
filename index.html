@@ -5,31 +5,75 @@
       <meta charset="utf-8" />
       <title>Cim dat'a Mole</title>
       <link href="css/style.css" rel="stylesheet" />
+      <link
+         rel="stylesheet"
+         href="https://unpkg.com/papercss@1.6.1/dist/paper.min.css"
+      />
    </head>
-   <body>
-      <h1>Cim dat'a Mole</h1>
-      <button id="start-retry">Start</button>
-
-      <input type="text" name="" id="countdown" value="" />
-
-      <label>
-         Leben
-         <input type="text" name="" id="life" value="" />
-      </label>
-      <label>
-         Level
-         <input type="text" name="" id="level" value="" />
-      </label> </br>
-      <label>Volume</label>
-      <label id="labelvolume" for="volume">
-         50
-      </label>
-      <input type="range" id="volume" min="0" max="100" step="1" value="50" />
-
-      <p id="info">&nbsp;</p>
-
-      <div id="hole"></div>
-      <div id="mole"></div>
+   <body class="row flex-middle flex-center">
+      <div class="col">
+         Volume:
+         <label id="labelvolume" for="volume">
+            50
+         </label>
+         <input
+            type="range"
+            id="volume"
+            min="0"
+            max="100"
+            step="1"
+            value="50"
+         />
+         <h1 class="margin">Cim dat'a Mole</h1>
+         <div class="row flex-bottom">
+            <div class="row margin-left">
+               <button
+                  class="shadow shadow-hover margin-right-small"
+                  id="start-retry"
+               >
+                  Start
+               </button>
+               <input
+                  class=""
+                  type="text"
+                  name=""
+                  readonly
+                  id="countdown"
+                  value=""
+               />
+            </div>
+            <div class="row margin-right-none ">
+               <label>
+                  Leben
+                  <input
+                     class="small margin-top-small"
+                     type="text"
+                     name=""
+                     readonly
+                     id="life"
+                     value=""
+                  />
+               </label>
+               <div class="margin-left">
+                  <label>
+                     Level
+                     <input
+                        class="small margin-top-small"
+                        type="text"
+                        name=""
+                        readonly
+                        id="level"
+                        value=""
+                     />
+                  </label>
+               </div>
+            </div>
+         </div>
+         <div class="">
+            <div class="row flex-center border padding" id="hole"></div>
+            <div class="row flex-center border padding" id="mole"></div>
+         </div>
+      </div>
       <script src="js/lib.js"></script>
       <script src="js/main.js"></script>
    </body>

@@ -1,7 +1,26 @@
-*,
-*:before,
-*:after {
+* {
    position: relative;
+}
+
+h1 {
+   text-align: center;
+}
+input {
+   max-width: 210px;
+}
+input.small {
+   text-align: center;
+   max-width: 50px;
+}
+/* patrick-hand-regular - latin */
+@font-face {
+   font-family: 'Patrick Hand';
+   font-style: normal;
+   font-weight: 400;
+   src: url('../font/PatrickHand-Regular.ttf');
+}
+body {
+   font-family: 'Patrick Hand';
 }
 #hole,
 #mole {
@@ -9,11 +28,25 @@
    position: absolute;
 }
 
+#hole img,
+#mole img {
+   border: 0;
+}
+
 img[data-active='true'] {
    z-index: 34534;
 }
 img[data-active='false'] {
    z-index: 9;
+}
+
+#mole img.shake {
+   -webkit-animation-name: shake;
+   animation-name: shake;
+   -webkit-animation-duration: 0.4s;
+   animation-duration: 0.4s;
+   -webkit-animation-fill-mode: both;
+   animation-fill-mode: both;
 }
 
 @keyframes shake {
@@ -28,15 +61,15 @@ img[data-active='false'] {
    50%,
    70%,
    90% {
-      -webkit-transform: translate3d(-10px, 0, 0);
-      transform: translate3d(-10px, 0, 0);
+      -webkit-transform: translate3d(-4px, 0, 0);
+      transform: translate3d(-4px, 0, 0);
    }
 
    20%,
    40%,
    60%,
    80% {
-      -webkit-transform: translate3d(10px, 0, 0);
-      transform: translate3d(10px, 0, 0);
+      -webkit-transform: translate3d(4px, 0, 0);
+      transform: translate3d(4px, 0, 0);
    }
 }

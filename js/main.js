@@ -119,6 +119,7 @@
         hit = true;
         //if u hit a mole u get the mole_hited img, gets reseted after each instance
         this.src = 'img/mole_hited.png';
+        this.classList.add("shake");
 
       }
       // Here we can check if you hit a hole and have 0 Lifes the game is over
@@ -143,9 +144,11 @@
       if (runningGame) {
         level.value = currentLevel;
         setTimeout(() => {
-          levelUpAudio.play();
-          currentLevel++;
-          raiseLevel()
+          if (life.value != 0) {
+            currentLevel++;
+            levelUpAudio.play();
+            raiseLevel()
+          }
         }, 5000);
       }
 
@@ -156,8 +159,12 @@
       peekTime = 350 + 1000 / currentLevel;
       turnTime = 450 + 1000 / currentLevel
       const random = Math.floor(Math.random() * fieldSize);
+
       //if a mole_hited png is still in the field just overwrite it at the start of an instance
       moleImgs.filter(i => (i.src !== 'img/mole.png') ? i.src = 'img/mole.png' : i)
+      // If a shake class is still on a mple img remove it
+      moleImgs.filter(i => (i.classList.contains('shake')) ? i.classList.remove('shake') : i)
+
       // Here we say if u didn't hit anything u will loose a life, and if u did hit something we reset the Value hit to false
       function oneTurnCheck() {
         toggle(moleImgs[random]);
