@@ -1,73 +1,128 @@
 <!DOCTYPE html>
 
 <html>
-  <head>
-    <meta charset="utf-8" />
-    <title>Cim dat'a Mole</title>
-    <link href="css/style.css" rel="stylesheet" />
-    <link
-      rel="stylesheet"
-      href="https://unpkg.com/papercss@1.6.1/dist/paper.min.css"
-    />
-  </head>
-  <body class="row flex-middle flex-center">
-    <div class="col">
-      Volume:
-      <label id="labelvolume" for="volume">
-        50
-      </label>
-      <input type="range" id="volume" min="0" max="100" step="1" value="50" />
-      <h1 class="margin">Cim dat'a Mole</h1>
-      <div class="row flex-bottom">
-        <div class="row margin-left">
-          <button
-            class="shadow shadow-hover margin-right-small"
-            id="start-retry"
-          >
-            Start
-          </button>
-          <input
-            class=""
-            type="text"
-            name=""
-            readonly
-            id="countdown"
-            value=""
-          />
-        </div>
-        <div class="row margin-left ">
-          <label>
-            Leben
+   <head>
+      <meta charset="utf-8" />
+      <title>Cim dat'a Mole</title>
+      <link
+         rel="stylesheet"
+         href="https://unpkg.com/papercss@1.6.1/dist/paper.min.css"
+      />
+      <link href="css/style.css" rel="stylesheet" />
+   </head>
+   <body class="row flex-middle flex-center">
+      <div class="col">
+         <div class="volumeSlider">
+            <div>
+               Volume:
+               <label class="" id="labelvolume" for="volume">
+                  50
+               </label>
+            </div>
             <input
-              class="small margin-top-small"
-              type="text"
-              name=""
-              readonly
-              id="life"
-              value=""
+               type="range"
+               id="volume"
+               min="0"
+               max="100"
+               step="1"
+               value="50"
             />
-          </label>
-          <div class="margin-left">
-            <label>
-              Level
-              <input
-                class="small margin-top-small"
-                type="text"
-                name=""
-                readonly
-                id="level"
-                value=""
-              />
-            </label>
-          </div>
-        </div>
+         </div>
+         <h1 class="margin">Cim dat'a Mole</h1>
+         <div id="welcome-card" class="card row flex-center border padding">
+            <img src="img/mole-real.jpg" alt="Image of a real mole" />
+
+            <div class="card-body">
+               <h4 class="card-title">Welcome beloved mole hunter!</h4>
+               <h5 class="card-subtitle">Winter is gone ... Moles are HERE!</h5>
+               <p class="card-text">
+                  Protect your screen from virus-infected, crazy moles by
+                  slaying them with well-placed clicks of your mighty mouse! You
+                  have 3 lives. Miss a mole, lose a life. The longer you
+                  survive, the higher your level , the greater your fame - but
+                  the faster their army attack! Be prepared. Happy hunting...
+               </p>
+               <label>
+                  Please enter your name, so they can write songs about
+                  you:</label
+               >
+               <input
+                  type="text"
+                  id="playerName"
+                  placeholder="Marudun, the hairy one"
+                  class="margin-small"
+               />
+               <button
+                  id="hide-welcome-card"
+                  class="border-danger margin-small"
+               >
+                  Let the hunt begin!
+               </button>
+            </div>
+         </div>
+         <div
+            id="game-over-card"
+            class="card row flex-center border padding display-none"
+         >
+            <img src="img/gold.jpg" alt="Image of a real mole" />
+
+            <div class="card-body">
+               <h4 class="card-title">The hunt is over...</h4>
+               <h5 class="card-subtitle">Was it satisfying?</h5>
+               <p id="game-over-text" class="card-text"></p>
+               <button id="hide-game-over-card">Yeah, yeah, whatever!</button>
+            </div>
+         </div>
+         <div class="row flex-bottom">
+            <div class="row margin-left">
+               <button
+                  class="shadow shadow-hover margin-right-small"
+                  id="start-retry"
+               >
+                  Start
+               </button>
+               <input
+                  class=""
+                  type="text"
+                  name=""
+                  readonly
+                  id="countdown"
+                  value=""
+               />
+            </div>
+            <div class="row margin-left ">
+               <label>
+                  Leben
+                  <input
+                     class="small margin-top-small"
+                     type="text"
+                     name=""
+                     readonly
+                     id="life"
+                     value=""
+                  />
+               </label>
+               <div class="margin-left">
+                  <label>
+                     Level
+                     <input
+                        class="small margin-top-small"
+                        type="text"
+                        name=""
+                        readonly
+                        id="level"
+                        value=""
+                     />
+                  </label>
+               </div>
+            </div>
+         </div>
+         <div class="">
+            <div class="row flex-center border padding" id="hole"></div>
+            <div class="row flex-center border padding" id="mole"></div>
+         </div>
       </div>
-      <div class="">
-        <div class="row flex-center border padding" id="hole"></div>
-        <div class="row flex-center border padding" id="mole"></div>
-      </div>
-    </div>
-    <script src="js/lib.js"></script>
-    <script src="js/main.js"></script>
-  </body>
+      <script src="js/lib.js"></script>
+      <script src="js/main.js"></script>
+   </body>
 </html>

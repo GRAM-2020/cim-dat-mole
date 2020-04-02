@@ -1,75 +1,99 @@
 * {
-  position: relative;
+   position: relative;
 }
 
 h1 {
-  text-align: center;
+   text-align: center;
 }
 input {
-  max-width: 210px;
+   max-width: 210px;
 }
 input.small {
-  text-align: center;
-  max-width: 50px;
+   text-align: center;
+   max-width: 50px;
 }
+
+.display-none {
+   display: none;
+}
+.display-block {
+   display: block;
+}
+
 /* patrick-hand-regular - latin */
 @font-face {
-  font-family: "Patrick Hand";
-  font-style: normal;
-  font-weight: 400;
-  src: url("../font/PatrickHand-Regular.ttf");
+   font-family: 'Patrick Hand';
+   font-style: normal;
+   font-weight: 400;
+   src: url('../font/PatrickHand-Regular.ttf');
 }
 body {
-  font-family: "Patrick Hand";
+   font-family: 'Patrick Hand';
 }
 #hole,
 #mole {
-  width: 520px;
-  position: absolute;
+   width: 520px;
+   position: absolute;
 }
 
 #hole img,
 #mole img {
-  border: 0;
+   border: 0;
 }
 
-img[data-active="true"] {
-  z-index: 34534;
+.volumeSlider {
+   display: flex;
+   flex-direction: column;
+   align-items: flex-end;
 }
-img[data-active="false"] {
-  z-index: 9;
+img[data-active='true'] {
+   z-index: 5000;
+}
+img[data-active='false'] {
+   z-index: 2000;
+}
+
+.card {
+   position: absolute;
+   background: white;
+   width: 530px;
+   z-index: 7000;
+}
+
+#welcome-card {
+}
+
+#game-over-card {
+   z-index: 7001;
 }
 
 #mole img.shake {
-  -webkit-animation-name: shake;
-  animation-name: shake;
-  -webkit-animation-duration: 0.4s;
-  animation-duration: 0.4s;
-  -webkit-animation-fill-mode: both;
-  animation-fill-mode: both;
+   -webkit-animation-name: shake;
+   animation-name: shake;
+   -webkit-animation-duration: 0.4s;
 }
 
 @keyframes shake {
-  from,
-  to {
-    -webkit-transform: translate3d(0, 0, 0);
-    transform: translate3d(0, 0, 0);
-  }
+   from,
+   to {
+      -webkit-transform: translate3d(0, 0, 0);
+      transform: translate3d(0, 0, 0);
+   }
 
-  10%,
-  30%,
-  50%,
-  70%,
-  90% {
-    -webkit-transform: translate3d(-4px, 0, 0);
-    transform: translate3d(-4px, 0, 0);
-  }
+   10%,
+   30%,
+   50%,
+   70%,
+   90% {
+      -webkit-transform: translate3d(-4px, 0, 0);
+      transform: translate3d(-4px, 0, 0);
+   }
 
-  20%,
-  40%,
-  60%,
-  80% {
-    -webkit-transform: translate3d(4px, 0, 0);
-    transform: translate3d(4px, 0, 0);
-  }
+   20%,
+   40%,
+   60%,
+   80% {
+      -webkit-transform: translate3d(4px, 0, 0);
+      transform: translate3d(4px, 0, 0);
+   }
 }

@@ -1,4 +1,4 @@
-(function() {
+(function () {
   //Variables we will give an initial Value
   let fieldSize,
     startingLifes,
@@ -13,6 +13,11 @@
   const startRetryButton = select("#start-retry");
   const hole = select("#hole");
   const mole = select("#mole");
+  const hideWelcomeCardButton = select('#hide-welcome-card')
+  const welcomeCard = select('#welcome-card')
+  const gameOverCard = select('#game-over-card')
+  const hideGameOverCardButton = select('#hide-game-over-card')
+  const gameOverText = select('#game-over-text');
 
   // Values that change
   let countdownInput = select("#countdown");
@@ -35,6 +40,11 @@
   loseAudio.src = "sound/lose.mp3";
   let retryAudio = new Audio();
   retryAudio.src = "sound/retry.mp3";
+
+  //Intro
+  hideWelcomeCardButton.addEventListener('click', () => {
+    welcomeCard.classList.add('display-none')
+  })
 
   // inital Values
   function initVars() {
@@ -156,7 +166,7 @@
       if (runningGame) {
         level.value = currentLevel;
         setTimeout(() => {
-          if (life.value != 0) {
+          if (life.value > 0) {
             currentLevel++;
             levelUpAudio.play();
             raiseLevel();
@@ -215,10 +225,17 @@
   // **************************** EndDisplay  ****************************
   // needs to live outside so the startGame and the checkClick can use the fkt
   function gameOverAlert() {
+    gameOverText.innerText = `Congrats my friend:
+                  You have reached level ${currentLevel}!
+                  The tales of this hunt will be long told after your death...`
     gameOverAudio.play();
-    alert(`GAME OVER! You have reached level ${currentLevel}`);
+    gameOverCard.classList.add('display-block');
     runningGame = false;
   }
+
+  hideGameOverCardButton.addEventListener('click', () => {
+    gameOverCard.classList.remove('display-block');
+  })
 
   // Ausführung
   initVars();
