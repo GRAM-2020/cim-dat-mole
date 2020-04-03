@@ -1,108 +1,76 @@
-(function () {
-  //Variables we will give an initial Value
+(function() {
+  //Initiate variables with undefined values
   let fieldSize,
-    startingLifes,
+    startingLives,
     peekTime,
     turnTime,
-    lifeCounter,
-    clicked,
+    playerHasClicked,
     runningGame,
     fieldActive,
-    molesKilled
-    ;
+    molesKilled;
 
-  //Variables that have a connection to the Dom Element
-  const startRetryButton = select("#start-retry");
+  //Constants of query selected HTML elements
   const hole = select("#hole");
   const mole = select("#mole");
-  const hideWelcomeCardButton = select('#hide-welcome-card')
-  const welcomeCard = select('#welcome-card')
-  const gameOverCard = select('#game-over-card')
-  const hideGameOverCardButton = select('#hide-game-over-card')
-  const gameOverText = select('#game-over-text');
-  const playerNameInput = select("#playerNameInput");
-  const highscoreList = select('#highscore-list');
+  const welcomeCard = select("#welcome-card");
+  const gameOverCard = select("#game-over-card");
+  const gameOverText = select("#game-over-text");
+  const hideWelcomeCardButton = select("#hide-welcome-card");
+  const hideGameOverCardButton = select("#hide-game-over-card");
+  const startRetryButton = select("#start-retry");
+  const playerNameInput = select("#player-name-input");
+  const highScoreList = select("#high-score-list");
 
-  // Values that change
+  //Game play variables
   let countdownInput = select("#countdown");
   let life = select("#life");
   let level = select("#level");
   let playerName = "";
 
-  //Sounds
+  //Audio settings and all sounds
   let vol = 0.5;
-  let labelVol = select("#labelvolume");
-  let inputVol = select("#volume");
-  let gameOverAudio = new Audio("sound/gameover.mp3")
-  let countDownAudio = new Audio("sound/countdown.mp3")
-  let hitAudio = new Audio("sound/hit.mp3")
-  let levelUpAudio = new Audio("sound/levelup.mp3")
-  let loseAudio = new Audio("sound/lose.mp3")
-  let retryAudio = new Audio("sound/retry.mp3")
+  let labelVolume = select("#labelvolume");
+  let inputVolume = select("#volume");
+  let gameOverAudio = new Audio("sound/gameover.mp3");
+  let countDownAudio = new Audio("sound/countdown.mp3");
+  let hitAudio = new Audio("sound/hit.mp3");
+  let levelUpAudio = new Audio("sound/levelup.mp3");
+  let loseAudio = new Audio("sound/lose.mp3");
+  let retryAudio = new Audio("sound/retry.mp3");
 
-  //Intro
-  hideWelcomeCardButton.addEventListener('click', () => {
-    welcomeCard.classList.add('display-none');
-    if (!playerName) {
-      playerName = 'Maradun';
-    }
-    countdownInput.value = `Ready, ${playerName}?`;
-  })
-
-  //Name
-  playerNameInput.addEventListener('change', (e) => {
-    playerName = e.target.value;
-    countdownInput.value = `Ready, ${playerName}?`;
-  })
-
-  // inital Values
-  function initVars() {
-    molesKilled = 0;
-    runningGame = false;
-    startingLifes = 3;
+  //Initial game values
+  function initialVariables() {
+    startingLives = 3;
+    life.value = startingLives;
     currentLevel = 1;
     level.value = currentLevel;
-    life.value = startingLifes;
+    molesKilled = 0;
     fieldSize = 9;
     fieldActive = false;
-    clicked = false;
+    playerHasClicked = false;
+    runningGame = false;
+    levelDuration = 6000;
   }
 
-  // ****************************  The Board  ****************************
-  // Here we laod in the holefield, which gets the attribute active=true,
-  // that means it has an higher i-index than active=false and is visible
-  function initField() {
-    let img;
-    for (let i = 0; i < fieldSize; i++) {
-      img = create("img");
-      img.draggable = false;
-      img.src = "img/hole.png";
-      img.setAttribute("data-active", "true");
-      img.setAttribute("data-img", "hole");
-      img.addEventListener("click", checkClick);
-      hole.appendChild(img);
+  //Hide the welcome card
+  hideWelcomeCardButton.addEventListener("click", () => {
+    welcomeCard.classList.add("display-none");
+    if (!playerName) {
+      playerName = "Maradun";
     }
-  }
+    countdownInput.value = `Ready, ${playerName}?`;
+  });
 
-  // Here we laod in the molefield, with active false, both hole and mole get img attribute
-  // to let us know if we clickt a hole or mole
-  function crazyMole() {
-    let img;
-    for (let i = 0; i < fieldSize; i++) {
-      img = create("img");
-      img.draggable = false;
-      img.src = "img/mole.png";
-      img.setAttribute("data-active", "false");
-      img.setAttribute("data-img", "mole");
-      img.addEventListener("click", checkClick);
-      mole.appendChild(img);
-    }
-  }
+  //Player name input
+  playerNameInput.addEventListener("change", e => {
+    playerName = e.target.value;
+    countdownInput.value = `Ready, ${playerName}?`;
+  });
 
-  // **************************** ChangeVolume  ****************************
+  //Volume control of all sounds with one slider
   function changeVolume() {
     vol = parseInt(this.value);
-    labelVol.innerHTML = vol;
+    labelVolume.innerHTML = vol;
     countDownAudio.volume = vol / 100;
     gameOverAudio.volume = vol / 100;
     hitAudio.volume = vol / 100;
@@ -110,19 +78,40 @@
     loseAudio.volume = vol / 100;
     retryAudio.volume = vol / 100;
   }
-  inputVol.addEventListener("input", changeVolume);
+  inputVolume.addEventListener("input", changeVolume);
 
-
-  // ****************************  Starting/restarting the game + Countdown ****************************
-  // Countdown for the game u can only click once, the variable runningGame is set to true
-  startRetryButton.addEventListener("click", () => {
-    if (life.value < startingLifes) {
-      retryAudio.play();
+  // ****************************  The Board  ****************************
+  // Here we initiate the hole field. Holes get the attribute active=true,
+  // that means they have a higher z-index than active=false -> they're visible
+  function createHoleField() {
+    let img;
+    for (let i = 0; i < fieldSize; i++) {
+      img = create("img");
+      img.draggable = false;
+      img.src = "img/hole.png";
+      img.setAttribute("data-active", "true");
+      img.setAttribute("data-img", "hole");
+      img.addEventListener("mousedown", checkClickInGame);
+      hole.appendChild(img);
     }
-    initVars();
-    countdown();
-  });
+  }
 
+  // Same with the mole field, but active=false - moles are hidden. In both fields the images get a data-img attribute (respectively hole or mole) and an event listener, to check the clicks later
+  function createMoleField() {
+    let img;
+    for (let i = 0; i < fieldSize; i++) {
+      img = create("img");
+      img.draggable = false;
+      img.src = "img/mole.png";
+      img.setAttribute("data-active", "false");
+      img.setAttribute("data-img", "mole");
+      img.addEventListener("mousedown", checkClickInGame);
+      mole.appendChild(img);
+    }
+  }
+
+  //Countdown which will start the game
+  //runningGame prevents you from starting multiple times
   function countdown() {
     if (!runningGame) {
       runningGame = true;
@@ -139,11 +128,20 @@
     }
   }
 
-  // **************************** Check for Click Event  ****************************
-  //Here we check for an click Event if its a hole u lose 1 life, u always get a hit, prevents loosing 2 lifes
-  function checkClick(e) {
+  startRetryButton.addEventListener("click", () => {
+    if (life.value < startingLives) {
+      retryAudio.play();
+    }
+    initialVariables();
+    countdown();
+  });
+
+  //Outsourced function to check your in game clicks
+  //Here we check if you hit the mole or missed it. A Miss = you lose a life. fieldActive is used to prevent multi-clicking per round.
+  function checkClickInGame(e) {
     if (fieldActive) {
-      clicked = true;
+      playerHasClicked = true;
+      //if you didn't hit. Play audio. Lose a life.
       if (
         this.getAttribute("data-active") === "true" &&
         this.getAttribute("data-img") === "hole"
@@ -151,29 +149,28 @@
         loseAudio.play();
         life.value--;
       } else {
-        ++molesKilled;
+        //Counter goes up. Audio plays. Mole changes. Mole shakes.
         hitAudio.play();
-        //if u hit a mole u get the mole_hited img, gets reseted after each instance
-        this.src = "img/mole_hited.png";
+        this.src = "img/mole_hitted.png";
         this.classList.add("shake");
+        ++molesKilled;
       }
 
-      // Here we can check if you hit a hole and have 0 Lifes the game is over
+      //Check if you have lives left
       if (life.value === "0") {
-        gameOverAlert();
+        showGameOverCard();
       }
     }
   }
 
-  // **************************** First time starting the Game  ****************************
+  // **************************** Actual starting of the game function  ****************************
   function startGame() {
     const holeImgs = selectAll("[data-img='hole']");
     const moleImgs = selectAll("[data-img='mole']");
     const allImgs = selectAll("img");
 
-    // now the function checkClick will update the score
     fieldActive = true;
-
+    //Automatically raising the level
     (function raiseLevel() {
       if (runningGame) {
         level.value = currentLevel;
@@ -183,89 +180,88 @@
             levelUpAudio.play();
             raiseLevel();
           }
-        }, 6000);
+        }, levelDuration);
       }
     })();
 
-    // **************************** Logic for one Instance of the Game  ****************************
+    // **************************** Logic of one turn (= one mole attacks you) ****************************
     function oneTurn() {
+      //time a mole peeks out of the hole
       peekTime = 350 + 1000 / currentLevel;
+      //time until next mole shows up
       turnTime = 450 + 1000 / currentLevel;
       const random = Math.floor(Math.random() * fieldSize);
 
-      //if a mole_hited png is still in the field just overwrite it at the start of an instance
+      //if a mole_hitted png is still in the field just overwrite it at the start of an instance
       moleImgs.filter(i =>
         i.src !== "img/mole.png" ? (i.src = "img/mole.png") : i
       );
-      // If a shake class is still on a mple img remove it
+      //if a shake class is still on a mole img remove it
       moleImgs.filter(i =>
         i.classList.contains("shake") ? i.classList.remove("shake") : i
       );
 
-      // Here we say if u didn't hit anything u will loose a life, and if u did hit something we reset the Value hit to false
+      //Show mole. Check if player has played/clicked, if not he couldn't have hitted a mole so minus a life. Check for remaining lives.
       function oneTurnCheck() {
-        toggle(moleImgs[random]);
-        // hit is set to false in the init Vars
-        if (!clicked) {
+        toggleVisibility(moleImgs[random]);
+        if (!playerHasClicked) {
           loseAudio.play();
           life.value--;
           if (life.value === "0") {
-            gameOverAlert();
+            showGameOverCard();
           }
         }
-        clicked = false;
+        playerHasClicked = false;
       }
 
       // here we start one turn and test if hit is true or false, than we restart a new Instance of the Game
-      toggle(moleImgs[random]);
+      toggleVisibility(moleImgs[random]);
       setTimeout(() => oneTurnCheck(), peekTime);
-      setTimeout(
-        () => {
-          if (life.value > 0) {
-            oneTurn();
-          }
-          startRetryButton.innerText = "Retry";
-        },
-        peekTime + turnTime
-      );
+      setTimeout(() => {
+        if (life.value > 0) {
+          oneTurn();
+        }
+        startRetryButton.innerText = "Retry";
+      }, peekTime + turnTime);
     }
     oneTurn();
   }
 
-  //highscore
-  const highScores = JSON.parse(localStorage.getItem("highScores")) || [];
+  // **************************** Game Over Card   ****************************
+  // needs to live outside so the startGame and the checkClickInGame can use the fkt
 
-  // **************************** EndDisplay  ****************************
-  // needs to live outside so the startGame and the checkClick can use the fkt
-  function gameOverAlert() {
+  //Get old high score from local storage or init an array
+  const highScores = JSON.parse(localStorage.getItem("highScores")) || [];
+  //Create score element. Add to high score. Sort it scores. Cut at length 5. Save to local storage. Empty high score list. Add items from array as li to html. Create personalized game over text. Pl;ay audio. Show card. Switch game and field off.
+  function showGameOverCard() {
     const score = {
       playername: playerName,
       level: currentLevel,
       kills: molesKilled
-    }
+    };
     highScores.push(score);
     highScores.sort((a, b) => b.kills - a.kills);
     highScores.splice(5);
     localStorage.setItem("highScores", JSON.stringify(highScores));
-    highscoreList.innerHTML = "";
-    highScores.forEach((entry) => {
-      highscoreList.innerHTML += `<li> Level/Kills: ${entry.level}/${entry.kills} Name: ${entry.playername}</li>`
+    highScoreList.innerHTML = "";
+    highScores.forEach(entry => {
+      highScoreList.innerHTML += `<li> Level/Kills: ${entry.level}/${entry.kills} Name: ${entry.playername}</li>`;
     });
     gameOverText.innerText = `Congrats ${playerName}:
                   You have reached level ${currentLevel}!
                   The tales of this hunt will be long told after your death...`;
     gameOverAudio.play();
-    gameOverCard.classList.add('display-block');
+    gameOverCard.classList.add("display-block");
     runningGame = false;
     fieldActive = false;
   }
+  //button to hide card again
+  hideGameOverCardButton.addEventListener("click", () => {
+    gameOverCard.classList.remove("display-block");
+  });
 
-  hideGameOverCardButton.addEventListener('click', () => {
-    gameOverCard.classList.remove('display-block');
-  })
-
-  // Ausführung
-  initVars();
-  initField();
-  crazyMole();
+  // Execution
+  initialVariables();
+  createHoleField();
+  createMoleField();
 })();
