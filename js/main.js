@@ -5,7 +5,7 @@
     peekTime,
     turnTime,
     lifeCounter,
-    hit,
+    clicked,
     runningGame,
     fieldActive,
     molesKilled
@@ -23,9 +23,6 @@
   const playerNameInput = select("#playerNameInput");
   const highscoreList = select('#highscore-list');
 
-
-
-
   // Values that change
   let countdownInput = select("#countdown");
   let life = select("#life");
@@ -36,23 +33,12 @@
   let vol = 0.5;
   let labelVol = select("#labelvolume");
   let inputVol = select("#volume");
-  let countDownAudio = new Audio();
-  countDownAudio.src = "sound/countdown.mp3";
-  let hitAudio = new Audio();
-  hitAudio.src = "sound/hit.mp3";
-  let gameOverAudio = new Audio();
-  gameOverAudio.src = "sound/gameover.mp3";
-  let levelUpAudio = new Audio();
-  levelUpAudio.src = "sound/levelup.mp3";
-  let loseAudio = new Audio();
-  loseAudio.src = "sound/lose.mp3";
-  let retryAudio = new Audio();
-  retryAudio.src = "sound/retry.mp3";
-
-
-
-
-
+  let gameOverAudio = new Audio("sound/gameover.mp3")
+  let countDownAudio = new Audio("sound/countdown.mp3")
+  let hitAudio = new Audio("sound/hit.mp3")
+  let levelUpAudio = new Audio("sound/levelup.mp3")
+  let loseAudio = new Audio("sound/lose.mp3")
+  let retryAudio = new Audio("sound/retry.mp3")
 
   //Intro
   hideWelcomeCardButton.addEventListener('click', () => {
@@ -79,7 +65,7 @@
     life.value = startingLifes;
     fieldSize = 9;
     fieldActive = false;
-    hit = false;
+    clicked = false;
   }
 
   // ****************************  The Board  ****************************
@@ -115,7 +101,6 @@
 
   // **************************** ChangeVolume  ****************************
   function changeVolume() {
-    // console.log(this)
     vol = parseInt(this.value);
     labelVol.innerHTML = vol;
     countDownAudio.volume = vol / 100;
@@ -126,6 +111,8 @@
     retryAudio.volume = vol / 100;
   }
   inputVol.addEventListener("input", changeVolume);
+
+
   // ****************************  Starting/restarting the game + Countdown ****************************
   // Countdown for the game u can only click once, the variable runningGame is set to true
   startRetryButton.addEventListener("click", () => {
@@ -135,6 +122,7 @@
     initVars();
     countdown();
   });
+
   function countdown() {
     if (!runningGame) {
       runningGame = true;
@@ -155,21 +143,21 @@
   //Here we check for an click Event if its a hole u lose 1 life, u always get a hit, prevents loosing 2 lifes
   function checkClick(e) {
     if (fieldActive) {
+      clicked = true;
       if (
         this.getAttribute("data-active") === "true" &&
         this.getAttribute("data-img") === "hole"
       ) {
         loseAudio.play();
-        hit = true;
         life.value--;
       } else {
         ++molesKilled;
         hitAudio.play();
-        hit = true;
         //if u hit a mole u get the mole_hited img, gets reseted after each instance
         this.src = "img/mole_hited.png";
         this.classList.add("shake");
       }
+
       // Here we can check if you hit a hole and have 0 Lifes the game is over
       if (life.value === "0") {
         gameOverAlert();
@@ -195,7 +183,7 @@
             levelUpAudio.play();
             raiseLevel();
           }
-        }, 5000);
+        }, 6000);
       }
     })();
 
@@ -218,20 +206,19 @@
       function oneTurnCheck() {
         toggle(moleImgs[random]);
         // hit is set to false in the init Vars
-        if (!hit) {
+        if (!clicked) {
           loseAudio.play();
           life.value--;
           if (life.value === "0") {
             gameOverAlert();
           }
         }
-        hit = false;
+        clicked = false;
       }
 
       // here we start one turn and test if hit is true or false, than we restart a new Instance of the Game
       toggle(moleImgs[random]);
       setTimeout(() => oneTurnCheck(), peekTime);
-
       setTimeout(
         () => {
           if (life.value > 0) {
@@ -239,18 +226,14 @@
           }
           startRetryButton.innerText = "Retry";
         },
-
         peekTime + turnTime
       );
     }
-
     oneTurn();
   }
 
   //highscore
-
   const highScores = JSON.parse(localStorage.getItem("highScores")) || [];
-  // const MAX_HIGH_SCORES = 5;
 
   // **************************** EndDisplay  ****************************
   // needs to live outside so the startGame and the checkClick can use the fkt
@@ -264,14 +247,10 @@
     highScores.sort((a, b) => b.kills - a.kills);
     highScores.splice(5);
     localStorage.setItem("highScores", JSON.stringify(highScores));
-    console.log(score);
-    console.log(highScores);
     highscoreList.innerHTML = "";
     highScores.forEach((entry) => {
       highscoreList.innerHTML += `<li> Level/Kills: ${entry.level}/${entry.kills} Name: ${entry.playername}</li>`
     });
-
-
     gameOverText.innerText = `Congrats ${playerName}:
                   You have reached level ${currentLevel}!
                   The tales of this hunt will be long told after your death...`;
