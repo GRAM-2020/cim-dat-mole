@@ -1,4 +1,4 @@
-(function() {
+(function () {
   //Initiate variables with undefined values
   let fieldSize,
     startingLives,
